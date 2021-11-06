@@ -3,6 +3,7 @@ package pl.coderslab.springhibernatemodul6.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import pl.coderslab.springhibernatemodul6.dao.AuthorDao;
 import pl.coderslab.springhibernatemodul6.dao.BookDao;
@@ -11,15 +12,16 @@ import pl.coderslab.springhibernatemodul6.entity.Author;
 import pl.coderslab.springhibernatemodul6.entity.Book;
 import pl.coderslab.springhibernatemodul6.entity.Publisher;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
 @RequestMapping("/book/form")
 public class BookFormController {
 
-    private PublisherDao publisherDao;
-    private AuthorDao authorDao;
-    private BookDao bookDao;
+    private final PublisherDao publisherDao;            // przy wstrzykiwaniu FINAL dorzucaj
+    private final AuthorDao authorDao;
+    private final BookDao bookDao;
 
 
     public BookFormController(PublisherDao publisherDao, BookDao bookDao, AuthorDao authorDao) {
@@ -28,7 +30,7 @@ public class BookFormController {
         this.authorDao=authorDao;
     }
 
-    @GetMapping("/show")
+    @GetMapping("/add")
     public String showBookForm(Model model){
         model.addAttribute("book", new Book());
         return "/book/bookForm";
@@ -36,7 +38,10 @@ public class BookFormController {
 
 
     @PostMapping("/save")
-    public String saveBook(@ModelAttribute("book") Book book){
+    public String saveBook(@ModelAttribute("book") @Valid Book book, BindingResult result){
+        if(result.hasErrors()){
+            return "/book/bookForm";
+        }
          bookDao.saveBook(book);
          return "redirect:/book/form/all";
     }
@@ -49,18 +54,18 @@ public class BookFormController {
 
     @GetMapping("/edit/{id}")
     public String editBook(@PathVariable Long id, Model model){
-        model.addAttribute("book", new Book());
-        model.addAttribute("id", id);
+        model.addAttribute("book", bookDao.findById(id));
+
         return "/book/editBook";
     }
 
     @PostMapping("/saveChange")
-    public String saveBookChanges(@ModelAttribute("book") Book book, @ModelAttribute("id") Long id){
+    public String saveBookChanges(@ModelAttribute("book") @Valid Book book, BindingResult result){
+        if(result.hasErrors()){
+            return "/book/editBook";
+        }
 
-        Book bookToUpdate = bookDao.findById(id);
-        bookToUpdate=book;
-        bookDao.update(bookToUpdate);
-
+        bookDao.update(book);
         return "redirect:/book/form/all";
     }
 

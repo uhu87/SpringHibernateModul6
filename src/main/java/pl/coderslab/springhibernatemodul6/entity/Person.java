@@ -2,6 +2,7 @@ package pl.coderslab.springhibernatemodul6.entity;
 
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 
 @Entity
 @Table(name = "persons")

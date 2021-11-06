@@ -1,6 +1,10 @@
 package pl.coderslab.springhibernatemodul6.entity;
 
+import org.hibernate.validator.constraints.pl.NIP;
+import org.hibernate.validator.constraints.pl.REGON;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "publishers")
@@ -9,8 +13,31 @@ public class Publisher {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotEmpty(message = "Pole wymagane")
     private String name;
 
+    @NIP
+    private String nip;
+
+    @REGON
+    private String regon;
+
+    public String getNip() {
+        return nip;
+    }
+
+    public void setNip(String nip) {
+        this.nip = nip;
+    }
+
+    public String getRegon() {
+        return regon;
+    }
+
+    public void setRegon(String regon) {
+        this.regon = regon;
+    }
 
     public Long getId() {
         return id;
@@ -32,8 +59,9 @@ public class Publisher {
     public String toString() {
         return "Publisher{" +
                 "id=" + id +
-                ", title='" + name + '\'' +
+                ", name='" + name + '\'' +
+                ", nip='" + nip + '\'' +
+                ", regon='" + regon + '\'' +
                 '}';
     }
-
 }

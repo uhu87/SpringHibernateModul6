@@ -1,7 +1,11 @@
 package pl.coderslab.springhibernatemodul6.entity;
 
 
+import org.hibernate.validator.constraints.pl.PESEL;
+
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,11 +15,12 @@ public class Author {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotEmpty(message = "Pole wymagane")
     private String firstName;
+    @NotEmpty(message = "Pole wymagane")
     private String lastName;
     @ManyToMany(mappedBy = "authors")
     private List<Book>books = new ArrayList<>();
-
 
     public List<Book> getBooks() {
         return books;
@@ -23,6 +28,29 @@ public class Author {
 
     public void setBooks(List<Book> books) {
         this.books = books;
+    }
+
+    @PESEL
+    private String pesel;
+    @NotEmpty(message = "Pole wymagane")
+    @Email(message = "nieprawidlowy adres email")
+    private String email;
+
+
+    public String getPesel() {
+        return pesel;
+    }
+
+    public void setPesel(String pesel) {
+        this.pesel = pesel;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Long getId() {
@@ -53,12 +81,5 @@ public class Author {
         this.lastName = lastName;
     }
 
-    @Override
-    public String toString() {
-        return "Author{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                '}';
-    }
+
 }
